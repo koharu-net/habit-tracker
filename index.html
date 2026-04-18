@@ -256,7 +256,7 @@ body {
 </div>
 
 <div class="actions">
-  <button class="btn primary" onclick="saveAndCopy()">記録してコピー</button>
+  <button class="btn primary" onclick="saveToday()">記録する</button>
   <button class="btn" onclick="resetToday()">リセット</button>
 </div>
 
@@ -264,20 +264,20 @@ body {
 
 <script>
 const SECTIONS = [
-  { label: "食べ物・飲み物", habits: [
-    { id:"snack",   name:"お菓子を食べない",           desc:"間食全般" },
-    { id:"konbini", name:"コンビニで衝動買いをしない", desc:"お菓子・お酒など" },
-    { id:"coffee",  name:"コーヒー1杯・午前中のみ",    desc:"午後のコーヒー禁止" },
-  ]},
-  { label: "夜の習慣", habits: [
-    { id:"vid22",   name:"22時以降は動画を観ない",     desc:"YouTube・Netflix等" },
-    { id:"bedvid",  name:"ベッドで動画を観ない",       desc:"場所で区切る" },
-    { id:"stretch", name:"寝る前に10分ストレッチ",      desc:"ベッドに入る前に" },
-    { id:"bed23",   name:"23時台にベッドに入る",        desc:"23:00〜23:59" },
-  ]},
   { label: "朝の習慣", habits: [
     { id:"wake",    name:"7時30分に起きる",            desc:"スヌーズなし" },
     { id:"walk",    name:"朝散歩をする",                desc:"夏は省略OK", canSkip:true },
+  ]},
+  { label: "日中の習慣", habits: [
+    { id:"coffee",  name:"コーヒー1杯・午前中のみ",    desc:"午後のコーヒー禁止" },
+    { id:"snack",   name:"お菓子を食べない",            desc:"間食全般" },
+    { id:"konbini", name:"コンビニで衝動買いをしない",  desc:"お菓子・お酒など" },
+  ]},
+  { label: "夜の習慣", habits: [
+    { id:"vid22",   name:"22時以降は動画を観ない",     desc:"YouTube・Netflix等" },
+    { id:"stretch", name:"寝る前に10分ストレッチ",      desc:"ベッドに入る前に" },
+    { id:"bed23",   name:"23時台にベッドに入る",        desc:"23:00〜23:59" },
+    { id:"bedvid",  name:"ベッドで動画を観ない",        desc:"場所で区切る" },
   ]},
 ];
 const ALL = SECTIONS.flatMap(s => s.habits);
@@ -424,25 +424,11 @@ function render() {
 
 function toggleSummer(){summer=!summer;render();}
 
-function saveAndCopy(){
-  const act=active();
-  const n=[...done].filter(id=>act.find(h=>h.id===id)).length;
+function saveToday(){
   db[TODAY]={done:[...done],summer,ts:Date.now()};
   save(db);
   render();
-  const streak=calcStreak();
-  const d=new Date();
-  const doneNames=act.filter(h=>done.has(h.id)).map(h=>h.name);
-  const missNames=act.filter(h=>!done.has(h.id)).map(h=>h.name);
-  let msg=`【習慣日次報告 ${d.getMonth()+1}/${d.getDate()}】\n達成：${n}/${act.length}点　連続：${streak}日\n`;
-  if(doneNames.length) msg+=`✅ できた：${doneNames.join('、')}\n`;
-  if(missNames.length) msg+=`❌ できなかった：${missNames.join('、')}\n`;
-  msg+='\n一言コメントと明日へのアドバイスを1〜2点ください。';
-  navigator.clipboard.writeText(msg)
-    .then(()=>showToast('報告文をコピーしました'))
-    .catch(()=>{
-      prompt('コピーしてください',msg);
-    });
+  showToast('記録しました');
 }
 
 function resetToday(){done.clear();render();}
