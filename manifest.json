@@ -2,7 +2,7 @@
   "name": "習慣トラッカー",
   "short_name": "習慣",
   "description": "毎日の習慣を記録するアプリ",
-  "start_url": "/",
+  "start_url": "/habit-tracker/",
   "display": "standalone",
   "background_color": "#F7F6F2",
   "theme_color": "#F7F6F2",
